@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Menu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<style>
+    /*div{*/
+    /*    border: 1px solid black;*/
+    /*}*/
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="mt-5">
+        <nav class="navbar navbar-dark bg-dark bg-primary navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Restaurant Menu</a>
+
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                    <form id="filter-form" method="get" action="/menu" class="mb-3 form-group">
+<!--                        <label for="nameSearch">Restaurant Name</label>-->
+                        <input id="nameSearch" type="text" name="nameSearch" placeholder="Restaurant Name" />
+                        <select  id="menuType" name="menuType">
+                            <option value="">All</option>
+                            <!-- For each menu type you should have one <option> like below  -->
+                            <option value="PIZZA"> PIZZA</option>
+                            <option value="COOKIE">COOKIE</option>
+                            <option value="COFFEE"> COFFEE</option>
+                        </select>
+                        <button id="filter" type="submit" class="btn btn-success">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div>
+
+            <!-- The form below should invoke the method MenuController.showMenus -->
+
+            <div>
+                <!-- MenuController.showAdd -->
+                <a href="/menu/add" class="add-item btn btn-primary mb-3 mt-3" sec:authorize="hasRole('ROLE_ADMIN')">
+                    Add new menu
+                </a>
+            </div>
+            <table class="table table-dark">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Restaurant name</th>
+                        <th scope="col">Menu Type</th>
+                        <th scope="col">Menu Items</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+
+                <!-- For each menu you should have one <tr> like below -->
+                <tbody>
+                    <tr class="item" th:each="menu: ${menus}">
+                        <td th:text="${menu.restaurantName}">[menu.restaurantName]</td>
+                        <td th:text="${menu.menuType}">[menu.menuType]</td>
+                        <td>
+                            <ul>
+                                <!-- For each menu's item you should display one <li> element like the one below -->
+                                <li th:each="item: ${menu.menuItems}" th:text="${item.name}">[item.name]</li>
+                            </ul>
+                        </td>
+
+                        <td>
+                            <!-- MenuController.delete -->
+                            <form method="post" th:action="@{'/menu/{id}/delete' (id=${menu.id})}" sec:authorize="hasRole('ROLE_ADMIN')">
+                                <button type="submit" class="btn btn-danger delete-item form-">Delete</button>
+                            </form>
+                            <!-- MenuController.showEdit -->
+                            <a th:href="@{'/menu/{id}/edit' (id=${menu.id})}" class="btn btn-info edit-item" sec:authorize="hasRole('ROLE_ADMIN')">Edit</a>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
